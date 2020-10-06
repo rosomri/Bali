@@ -7,6 +7,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # spotify uri, unique id for every user
     spotify_id = models.CharField(max_length=50, blank=True)
+    deezer_id = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return self.user.username
