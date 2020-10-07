@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+import uuid
 
 class Profile(models.Model):
     # Inherits Attributes from User default instance
@@ -15,6 +15,7 @@ class Profile(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(max_length=50, blank=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True)
     spotify_name = models.CharField(max_length=50, blank=True)
     deezer_name = models.CharField(max_length=50, blank=True)
 
