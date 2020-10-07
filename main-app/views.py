@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 
 def index(request):
@@ -54,3 +56,32 @@ def user_login(request):
             return HttpResponse("Invalid login details given")
     else:
         return render(request, 'login.html', {})
+
+
+@login_required
+def choose_genres(request):
+    genre_list = Genre.objects.all()
+    # print(genre_list)
+    # if request.GET.get('gnum'):
+    #     genre_index = request.GET.get('gnum', 0)
+    #     curr_genre = Genre.objects.get(pk=genre_index)
+    #     return render(request, 'genres.html', {'genre': curr_genre})
+    context = {'data': []}
+    for genre in genre_list:
+        context['data'].append({'name': genre.name, 'id': genre.id})
+
+    # context = json.dumps(context, cls=DjangoJSONEncoder)
+    for item in context['data']:
+        print(item)
+    return render(request, 'temp.html', context={'name': 'Pop', 'id':1})
+
+def dislike_genre(request, genre_id):
+    return render(request, 'genres.html')
+
+
+
+
+
+
+
+

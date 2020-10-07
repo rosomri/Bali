@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="genre-card">
+    <div class="genre-name">
+        <span class="name"></span>
+        <button class="like">like</button>
+        <button class="dislike">dislike</button>
+    </div>
+</div>
+<script type="text/javascript">
+  var my_list = "{{ name }}";
+  document.write(my_list);
+  var arrayLength = my_list.length;
+  for (var i = 0; i < arrayLength; i++) {
+    document.write(my_list[i]["name"])
+    document.write(my_list[i]["id"])
+    //Do something
+}
+  var genre_list = context['data'];
+  function feed_data(){
+    if(genre_list.length>0){
+        var genre = genre_list.shift(); // returns the next row off the top of the array
+        var divs = $('.genre-name', '#genre-card').get(); // returns an array of matching elements
+        divs[i].find('span.name').text(genre.name);
+        divs[i].find('button').data('genre_id', genre.id);
+        <!--$.each(genre, function(i,v){-->
+            <!--$(divs[i]).find('span.name').text(v.name); // set the text for the span-->
+            <!--$(divs[i]).find('button').data('person_id', v.id); // stash the id in the button's "data"-->
+        <!--});-->
+        return true;
+    } else {
+        return false;
+    }
+  }
+
+// initial data fed in
+feed_data();
+
+var scores = {}; // we'll keep a map of id => score as we progress.
+
+$('.genre-name>button', '#genre-card').on('click', function(){ // note that $(el).on() was introduced recently (1.7.x ?)
+
+    var genre_id = $(this).data('genre_id'); // we will stash the id in the button when we add our person info to the markup
+
+    scores[genre_id] = 1; // this person hasn't been scored yet, so start a new counter.
+
+    var result = feed_data(); // feed in the next set of data (advance to the next pair).
+    if(result == false){ // we ran out of people to feed
+        // Tally scores here and do whatever you need to do to end the game!
+        // There are many ways you could go about searching the object for the highest score...
+    }
+});
+</script>
+</body>
+
+</html>
+
