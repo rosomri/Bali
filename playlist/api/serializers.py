@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from playlist.models import Song, AccountSong, Genre
+from playlist.models import Song, AccountSong, Genre, AccountGenre
+
+
+class AccountGenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccountGenre
+        fields = ['account', 'genre']
 
 
 class GenreSerializer(serializers.ModelSerializer):

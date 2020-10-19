@@ -25,13 +25,9 @@ urlpatterns = [
 
     # REST FRAMEWORK URLS
     path('api/playlist/', include('playlist.api.urls', 'playlist_api')),
-    # path('api/account', include('account.api.urls', 'account_api')),
+    path('api/account/', include('account.api.urls', 'account_api')),
 ]
 
-
-urlpatterns += [
-    path('', include('main-app.urls')),
-]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

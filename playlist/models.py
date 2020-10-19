@@ -34,6 +34,9 @@ class Song(models.Model):
     def __str__(self):
         return self.id
 
+    class Meta:
+        unique_together = ('title', 'artist')
+
 
 @receiver(post_delete, sender=Song)
 def submission_delete(sender, instance, **kwargs):
@@ -44,3 +47,14 @@ class AccountSong(models.Model):
     account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
+    
+    class Meta:
+        unique_together = ('account', 'song')
+
+
+class AccountGenre(models.Model):
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('account', 'genre')
