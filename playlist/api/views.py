@@ -10,6 +10,11 @@ from account.models import Account
 from playlist.api.serializers import GenreSerializer, SongSerializer, AccountGenreSerializer, AccountSongsSerializer
 from rest_framework.filters import SearchFilter, OrderingFilter
 
+from playlist.api.serializers import GenreSerializer, SongSerializer, AccountGenreSerializer
+from rest_framework.generics import ListAPIView
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+from django.http import HttpResponse
 
 # create a specific genre details by title
 @api_view(['POST'])
@@ -56,6 +61,7 @@ def create_song_view(request):
 
 # Get a specific song details by id
 @api_view(['GET'])
+@permission_classes(())
 def detail_song_view(request):
     id = request.data.get('id', '0')
     try:
@@ -120,6 +126,40 @@ class ApiAccountSongListView(ListAPIView):
     search_fields = ('=account__username',)
 
 
+# TEMPORARY - DELETE AFTER MOVING FUNCTION TO CELERY.PY
+def update_song_data(request):
+    # genres = Genre.objects.values_list('spotify_id', flat=True)
+    genres = Genre.objects.all()
+    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id='147bfd8a06454486ade277d9d82825f4',
+                                                                                client_secret='3030b3f1054d484291e16ea87982ecfd'))
+
+    playlist_dict = {'songs': []}
+    for gen in genres:
+        cat = gen.spotify_id
+        print('getting playlists for ', cat)
+        results = spotify.category_playlists(category_id=cat, country='IL', limit=5)
+        playlists = results['playlists']['items']
+        for p in playlists:
+            print(f'The playlist name is {p["name"]} and the url is {p["external_urls"]["spotify"]}')
+            playlist_content = spotify.playlist_items(p['id'])['items']
+            for item in playlist_content:
+                if item['track']:
+                    song_id = item['track']['id']
+                    song_name = item['track']['name']
+                    song_artists = item['track']['artists']
+                    song_image_url = item['track']['album']['images'][0]['url']
+                    artists_string = ""
+                    for art in song_artists:
+                        artists_string += art['name'] + ', '
+                    # print(f"{song_name} by {artists_string[:-2]}. id: {song_id}")
+                    song_obj = Song(id=song_id, title=song_name, artist=artists_string[:-2], image=song_image_url, genre=gen)
+                    # song_dict = {'song_id': song_id, 'song_name': song_name, 'song_artists': artists_string[:-2],
+                    #              'genre': cat, 'image_url': song_image_url}
+                    playlist_dict['songs'].append(song_obj)
+    print(playlist_dict['songs'][-3:])
+    for songObj in playlist_dict['songs']:
+        songObj.save()
+    return HttpResponse('Updated songs data')
 # GET all genres
 class ApiGenreListView(ListAPIView):
     queryset = Genre.objects.all()

@@ -10,6 +10,7 @@ from playlist.api.views import (
     ApiGenreListView,
     ApiAccountGenreListView,
     ApiOptionalSongList,
+    update_song_data
 )
 app_name = "playlist"
 
@@ -24,4 +25,7 @@ urlpatterns = [
     path('optional_songs/<username>/', ApiOptionalSongList.as_view(), name="all_optional_songs"),
     path('account_genre/list/', ApiAccountGenreListView.as_view(), name="account_genre_list"),
     path('account_genre/create/', create_account_genre_view, name="create_account_genre"),
+    # temp url for song data update
+    path('song/update_data/', update_song_data, name="update_songs_data"),
+    # path('callback/')
 ]

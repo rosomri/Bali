@@ -13,6 +13,7 @@ def upload_genre_location(instance, filename):
 class Genre(models.Model):
     title = models.CharField(max_length=50, blank=False)
     image = models.ImageField(upload_to=upload_genre_location, null=True, blank=True)
+    spotify_id = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -27,15 +28,15 @@ class Song(models.Model):
     id = models.CharField(max_length=50, blank=False, primary_key=True)
     title = models.TextField(max_length=10, blank=False)
     artist = models.TextField(max_length=100, blank=False)
-    image = models.ImageField(upload_to=upload_song_location, null=True, blank=True)
+    image = models.URLField(null=True, blank=True, max_length=100)
     # TODO check if a song has one genre or multiple
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.id
 
-    class Meta:
-        unique_together = ('title', 'artist')
+    # class Meta:
+    #     unique_together = ('title', 'artist')
 
 
 @receiver(post_delete, sender=Song)
