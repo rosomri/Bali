@@ -132,15 +132,12 @@ def update_song_data(request):
     genres = Genre.objects.all()
     spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id='147bfd8a06454486ade277d9d82825f4',
                                                                                 client_secret='3030b3f1054d484291e16ea87982ecfd'))
-
     playlist_dict = {'songs': []}
     for gen in genres:
         cat = gen.spotify_id
-        print('getting playlists for ', cat)
         results = spotify.category_playlists(category_id=cat, country='IL', limit=5)
         playlists = results['playlists']['items']
         for p in playlists:
-            print(f'The playlist name is {p["name"]} and the url is {p["external_urls"]["spotify"]}')
             playlist_content = spotify.playlist_items(p['id'])['items']
             for item in playlist_content:
                 if item['track']:
@@ -156,10 +153,11 @@ def update_song_data(request):
                     # song_dict = {'song_id': song_id, 'song_name': song_name, 'song_artists': artists_string[:-2],
                     #              'genre': cat, 'image_url': song_image_url}
                     playlist_dict['songs'].append(song_obj)
-    print(playlist_dict['songs'][-3:])
     for songObj in playlist_dict['songs']:
         songObj.save()
     return HttpResponse('Updated songs data')
+
+
 # GET all genres
 class ApiGenreListView(ListAPIView):
     queryset = Genre.objects.all()
@@ -184,7 +182,7 @@ class ApiAccountGenreListView(ListAPIView):
 
 
 # GET all songs (by account genres)
-#   1) list: https://<your-domain>/api/playlist/optional_songs/<username>/
+#   1) list: https://<your-domain>/api/playlist/optional_songs/
 class ApiOptionalSongList(ListAPIView):
     serializer_class = SongSerializer
     pagination_class = PageNumberPagination
@@ -192,7 +190,8 @@ class ApiOptionalSongList(ListAPIView):
     permission_classes = ()
 
     def get_queryset(self):
-        genres = AccountGenre.objects.filter(account__username=self.kwargs['username'])
+        username = self.request.data.get('username', '0')
+        genres = AccountGenre.objects.filter(account__username=username)
         return Song.objects.filter(genre__in=genres.values('genre'))
 
 

@@ -22,7 +22,7 @@ urlpatterns = [
     path('song/update/', update_song_view, name="update_song"),
     path('song/delete/', delete_song_view, name="delete_song"),
     path('account_songs/', ApiAccountSongListView.as_view(), name="account_songs_list"),
-    path('optional_songs/<username>/', ApiOptionalSongList.as_view(), name="all_optional_songs"),
+    path('optional_songs/', ApiOptionalSongList.as_view(), name="all_optional_songs"),
     path('account_genre/list/', ApiAccountGenreListView.as_view(), name="account_genre_list"),
     path('account_genre/create/', create_account_genre_view, name="create_account_genre"),
     # temp url for song data update
