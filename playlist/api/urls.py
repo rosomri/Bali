@@ -6,14 +6,22 @@ from playlist.api.views import (
     update_song_view,
     create_song_view,
     create_account_genre_view,
+    ApiAccountSongListView,
+    ApiGenreListView,
+    ApiAccountGenreListView,
+    ApiOptionalSongList,
 )
 app_name = "playlist"
 
 urlpatterns = [
     path('genre/', detail_genre_view, name="details_genre"),
-    path('account_genre/create', create_account_genre_view, name="create_account_genre"),
-    path('song/create/', create_song_view, name="create_song"),
+    path('genre/list/', ApiGenreListView.as_view(), name="all_genre_list"),
     path('song/', detail_song_view, name="details_song"),
+    path('song/create/', create_song_view, name="create_song"),
     path('song/update/', update_song_view, name="update_song"),
     path('song/delete/', delete_song_view, name="delete_song"),
+    path('account_songs/', ApiAccountSongListView.as_view(), name="account_songs_list"),
+    path('optional_songs/<username>/', ApiOptionalSongList.as_view(), name="all_optional_songs"),
+    path('account_genre/list/', ApiAccountGenreListView.as_view(), name="account_genre_list"),
+    path('account_genre/create/', create_account_genre_view, name="create_account_genre"),
 ]
