@@ -106,14 +106,6 @@ def delete_song_view(request):
         return Response(data=data)
 
 
-# Reset user Songs and Genres
-@api_view(['DELETE'])
-@permission_classes((IsAdminUser,))
-def delete_song_view(request):
-    request.user.pk
-
-
-
 #   1) list: https://<your-domain>/api/playlist/account_song
 #   2) pagination: http://<your-domain>/api/playlist/account_song?page=2
 #   3) search: http://<your-domain>/api/playlist/account_song?search=<username>
